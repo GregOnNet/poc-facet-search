@@ -123,6 +123,44 @@
           }
         }
       }
+    },
+    "facet-search": {
+      "projectType": "library",
+      "root": "libs/facet-search",
+      "sourceRoot": "libs/facet-search/src",
+      "prefix": "poc",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "libs/facet-search/tsconfig.lib.json",
+            "project": "libs/facet-search/ng-package.json"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/facet-search/tsconfig.lib.json",
+              "libs/facet-search/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/facet-search/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/facet-search/jest.config.js",
+            "tsConfig": "libs/facet-search/tsconfig.spec.json",
+            "setupFile": "libs/facet-search/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "styleext": "scss"
+        }
+      }
     }
   },
   "cli": {

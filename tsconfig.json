@@ -15,7 +15,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@faceted-search/facet-search": ["libs/facet-search/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

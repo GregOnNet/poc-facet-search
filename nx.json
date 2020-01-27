@@ -17,6 +17,9 @@
     "faceted-search-app-e2e": {
       "tags": [],
       "implicitDependencies": ["faceted-search-app"]
+    },
+    "facet-search": {
+      "tags": []
     }
   }
 }
