@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "projects": {
+    "faceted-search-app": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/faceted-search-app",
+      "sourceRoot": "apps/faceted-search-app/src",
+      "prefix": "faceted-search",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/faceted-search-app",
+            "index": "apps/faceted-search-app/src/index.html",
+            "main": "apps/faceted-search-app/src/main.ts",
+            "polyfills": "apps/faceted-search-app/src/polyfills.ts",
+            "tsConfig": "apps/faceted-search-app/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "apps/faceted-search-app/src/favicon.ico",
+              "apps/faceted-search-app/src/assets"
+            ],
+            "styles": ["apps/faceted-search-app/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/faceted-search-app/src/environments/environment.ts",
+                  "with": "apps/faceted-search-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "faceted-search-app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "faceted-search-app:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "faceted-search-app:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/faceted-search-app/tsconfig.app.json",
+              "apps/faceted-search-app/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/faceted-search-app/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/faceted-search-app/jest.config.js",
+            "tsConfig": "apps/faceted-search-app/tsconfig.spec.json",
+            "setupFile": "apps/faceted-search-app/src/test-setup.ts"
+          }
+        }
+      }
+    },
+    "faceted-search-app-e2e": {
+      "root": "apps/faceted-search-app-e2e",
+      "sourceRoot": "apps/faceted-search-app-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/faceted-search-app-e2e/cypress.json",
+            "tsConfig": "apps/faceted-search-app-e2e/tsconfig.e2e.json",
+            "devServerTarget": "faceted-search-app:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "faceted-search-app:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["apps/faceted-search-app-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/faceted-search-app-e2e/**"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "schematics": {
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "faceted-search-app"
+}

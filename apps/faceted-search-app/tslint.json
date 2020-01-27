@@ -1,0 +1,7 @@
+{
+  "extends": "../../tslint.json",
+  "rules": {
+    "directive-selector": [true, "attribute", "facetedSearch", "camelCase"],
+    "component-selector": [true, "element", "faceted-search", "kebab-case"]
+  }
+}

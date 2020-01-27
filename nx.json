@@ -1,0 +1,22 @@
+{
+  "npmScope": "faceted-search",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "faceted-search-app": {
+      "tags": []
+    },
+    "faceted-search-app-e2e": {
+      "tags": [],
+      "implicitDependencies": ["faceted-search-app"]
+    }
+  }
+}
