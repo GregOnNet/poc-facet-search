@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'poc-facet-search',
@@ -8,10 +13,10 @@ import { Observable } from 'rxjs';
       type="text"
       class="facet-search"
       value="fake search"
-      [class.value-input]="modeValueInsert"
+      [class.facet-search-value]="modeValueInsert"
     />
     <ul class="facets-available">
-      <li *ngFor="let facet of facets | async"></li>
+      <li *ngFor="let facet of facetContext | async">{{ facet.label }}</li>
     </ul>
 
     <ul class="facet-labels">
@@ -20,26 +25,52 @@ import { Observable } from 'rxjs';
   `,
   styles: [
     `
-      .value-input {
-        color: #2ea0d9;
+      .facet-search {
+        font-size: 16px;
         width: 100%;
         padding: 12px 20px;
         margin: 8px 0;
         box-sizing: border-box;
+      }
+
+      .facet-search-value {
+        color: #2ea0d9;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetSearchComponent implements OnInit {
-  modeValueInsert = true;
+  @Input() facetGroup: FacetGroup = this.tempFacetGroup();
 
-  facets: Observable<FacetMenuItem>;
-  facetLabels: Observable<FacetLabel>;
+  modeValueInsert = false;
+
+  facetContext: Observable<FacetMenuItem[]>;
+  facetLabels: Observable<FacetLabel[]>;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.facetContext = this.initializeFacetContext(this.facetGroup);
+  }
+
+  private tempFacetGroup(): FacetGroup {
+    return {
+      label: '',
+      children: [
+        { label: 'Project' },
+        { label: 'Contact' },
+        { label: 'Company' }
+      ]
+    };
+  }
+
+  private initializeFacetContext(
+    facetGroup: FacetGroup
+  ): Observable<FacetMenuItem[]> {
+    const facetContext = facetGroup.children;
+    return of(facetContext);
+  }
 }
 
 export interface FacetMenuItem {
@@ -48,4 +79,33 @@ export interface FacetMenuItem {
 
 export interface FacetLabel {
   label: string;
+}
+
+export interface FacetGroupValue {
+  label: string;
+  values: Array<FacetValue<unknown>>;
+}
+
+export interface FacetGroup {
+  label: string;
+  children: Array<FacetGroup | FacetFreeText | FacetSelect<unknown>>;
+}
+
+export interface FacetValue<T> {
+  label: string;
+  value: T;
+}
+
+export interface FacetFreeText {
+  label: string;
+}
+
+export interface FacetSelect<T> {
+  label: string;
+  options: FacetOption<T>[] | Observable<FacetOption<T>[]>;
+}
+
+export interface FacetOption<T> {
+  label: string;
+  value: T;
 }
