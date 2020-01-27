@@ -25,7 +25,10 @@
               "apps/faceted-search-app/src/favicon.ico",
               "apps/faceted-search-app/src/assets"
             ],
-            "styles": ["apps/faceted-search-app/src/styles.scss"],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "apps/faceted-search-app/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -84,7 +87,10 @@
               "apps/faceted-search-app/tsconfig.app.json",
               "apps/faceted-search-app/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/faceted-search-app/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/faceted-search-app/**"
+            ]
           }
         },
         "test": {
@@ -118,8 +124,13 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/faceted-search-app-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/faceted-search-app-e2e/**"]
+            "tsConfig": [
+              "apps/faceted-search-app-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/faceted-search-app-e2e/**"
+            ]
           }
         }
       }
@@ -144,7 +155,10 @@
               "libs/facet-search/tsconfig.lib.json",
               "libs/facet-search/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/facet-search/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/facet-search/**"
+            ]
           }
         },
         "test": {
