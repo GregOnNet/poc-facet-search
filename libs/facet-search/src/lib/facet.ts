@@ -20,15 +20,15 @@ export class FacetContext {
     this.facetGroup = facetGroup;
   }
 
-  scope(facet: unknown): void {
-    if (isFacetFreeText(facet)) {
-      this.facets$$.next([]);
-      this.facetOptions$$.next([]);
-    } else if (isFacetSelect(facet)) {
+  scope(facet: FacetGroup | FacetFreeText | FacetSelect<unknown>): void {
+    if (isFacetSelect(facet)) {
       this.facets$$.next([]);
       this.facetOptions$$.next(facet.options);
     } else if (isFacetGroup(facet)) {
       this.facets$$.next(facet.children);
+      this.facetOptions$$.next([]);
+    } else if (isFacetFreeText(facet)) {
+      this.facets$$.next([]);
       this.facetOptions$$.next([]);
     }
 
@@ -40,7 +40,9 @@ export class FacetContext {
     this.facetOptions$$.next([]);
   }
 
-  setValue(value: any): void {}
+  setValue(value: any): void {
+    const last = this.facetValues;
+  }
 
   popValue(): any {}
 }
