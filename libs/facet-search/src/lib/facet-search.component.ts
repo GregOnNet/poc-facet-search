@@ -15,6 +15,13 @@ import {
 @Component({
   selector: 'poc-facet-search',
   template: `
+    {{ context.facetStack | json }}
+    <hr />
+    <input
+      type="text"
+      (input)="setValue($event.target.value)"
+      (keydown.backspace)="removeLastIfEmpty($event.target.value)"
+    />
     <hr />
     <strong>Facets</strong>
     <button
@@ -45,7 +52,6 @@ export class FacetSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
-    this.context.facetOptions$.subscribe(console.log);
   }
 
   scope(option: FacetGroup | FacetFreeText | FacetSelect<unknown>): void {
@@ -54,6 +60,13 @@ export class FacetSearchComponent implements OnInit {
 
   setValue(option: FacetOption<unknown>) {
     this.context.setValue(option);
+  }
+
+  removeLastIfEmpty(text: string) {
+    if (text) {
+      return;
+    }
+    this.context.removeLast();
   }
 
   unscope() {

@@ -10,7 +10,10 @@ export class FacetContext {
     FacetOption<unknown>[] | Observable<FacetOption<unknown>[]>
   >([]);
 
-  facetValues: Array<FacetGroup | FacetFreeText | FacetSelect<unknown>> = [];
+  facetStack: FacetStackItem<unknown>[] = [];
+  facetOptionsSnapshot:
+    | FacetOption<unknown>[]
+    | Observable<FacetOption<unknown>[]>;
 
   facets$ = this.facets$$.asObservable();
   facetOptions$ = this.facetOptions$$.pipe(switchMap(options => of(options)));
@@ -32,7 +35,21 @@ export class FacetContext {
       this.facetOptions$$.next([]);
     }
 
-    this.facetValues = [...this.facetValues, facet];
+    // get most recent value, without value
+    // add label to it
+    let itemWithoutValue = this.facetStack.find(item => !item.value);
+
+    if (!itemWithoutValue) {
+      itemWithoutValue = { label: facet.label, index: 0 };
+      this.facetStack = [...this.facetStack, itemWithoutValue];
+    } else {
+      itemWithoutValue.labelAdditions = itemWithoutValue.labelAdditions
+        ? [...itemWithoutValue.labelAdditions, facet.label]
+        : [facet.label];
+      this.facetStack[this.facetStack.length - 1] = itemWithoutValue;
+    }
+
+    this.facetOptionsSnapshot = this.facetOptions$$.getValue();
   }
 
   unscope(): void {
@@ -41,10 +58,24 @@ export class FacetContext {
   }
 
   setValue(value: any): void {
-    const last = this.facetValues;
+    this.unscope();
+
+    if (this.facetStack.length < 1) {
+      this.facetStack.push({ label: 'Term', value, index: 0 });
+    }
+
+    this.facetStack[this.facetStack.length - 1].index =
+      this.facetStack.length - 1;
+    this.facetStack[this.facetStack.length - 1].value = value;
   }
 
-  popValue(): any {}
+  removeAt(index: number): void {
+    this.facetStack.splice(index, 1);
+  }
+
+  removeLast() {
+    this.removeAt(this.facetStack.length - 1);
+  }
 }
 
 function isFacetFreeText(value: any): value is FacetFreeText {
@@ -67,19 +98,16 @@ export interface FacetMenuItem {
   label: string;
 }
 
-export interface FacetGroupValue {
-  label: string;
-  values: Array<FacetValue<unknown>>;
-}
-
 export interface FacetGroup {
   label: string;
   children: Array<FacetGroup | FacetFreeText | FacetSelect<unknown>>;
 }
 
-export interface FacetValue<T> {
+export interface FacetStackItem<T> {
+  index: number;
   label: string;
-  value: T;
+  labelAdditions?: string[];
+  value?: T;
 }
 
 export interface FacetFreeText {
