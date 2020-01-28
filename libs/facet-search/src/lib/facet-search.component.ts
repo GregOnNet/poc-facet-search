@@ -4,22 +4,28 @@ import {
   Input,
   OnInit
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import {
   FacetContext,
   FacetFreeText,
   FacetGroup,
   FacetOption,
-  FacetSelect
+  FacetSelect,
+  FacetStackItem
 } from './facet';
 
 @Component({
   selector: 'poc-facet-search',
   template: `
-    {{ context.facetStack | json }}
-    <hr />
+    <poc-facet-brick
+      [facet]="facet"
+      (delete)="remove($event)"
+      *ngFor="let facet of context.facetStack"
+    ></poc-facet-brick>
     <input
       type="text"
-      (input)="setValue($event.target.value)"
+      [formControl]="inputSearch"
+      (keydown.enter)="setValue($event.target.value)"
       (keydown.backspace)="removeLastIfEmpty($event.target.value)"
     />
     <hr />
@@ -43,11 +49,12 @@ import {
     <hr />
     <button (click)="unscope()">Reset</button>
   `,
-  styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetSearchComponent implements OnInit {
+  readonly inputSearch = new FormControl();
   context = new FacetContext();
+
   @Input() facetGroup: FacetGroup = tempFacetGroup();
 
   ngOnInit(): void {
@@ -60,6 +67,12 @@ export class FacetSearchComponent implements OnInit {
 
   setValue(option: FacetOption<unknown>) {
     this.context.setValue(option);
+    this.inputSearch.reset();
+  }
+
+  remove(facet: FacetStackItem<unknown>) {
+    this.context.remove(facet);
+    this.unscope();
   }
 
   removeLastIfEmpty(text: string) {

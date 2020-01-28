@@ -69,12 +69,13 @@ export class FacetContext {
     this.facetStack[this.facetStack.length - 1].value = value;
   }
 
-  removeAt(index: number): void {
-    this.facetStack.splice(index, 1);
+  remove(facet: FacetStackItem<unknown>): void {
+    this.facetStack.splice(facet.index, 1);
+    this.unscope();
   }
 
   removeLast() {
-    this.removeAt(this.facetStack.length - 1);
+    this.remove(this.facetStack[this.facetStack.length - 1]);
   }
 }
 
