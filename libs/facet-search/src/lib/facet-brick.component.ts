@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  Input,
+  Output
+} from '@angular/core';
 import { FacetStackItem } from './facet';
 
 @Component({
@@ -13,8 +20,13 @@ import { FacetStackItem } from './facet';
   styles: [
     `
       :host {
+        display: inline-block;
         border: 1px solid #e4e4e4;
         padding: 4px;
+      }
+
+      :host:focus {
+        border: 1px solid red;
       }
 
       .brick-label {
@@ -27,4 +39,11 @@ import { FacetStackItem } from './facet';
 export class FacetBrickComponent {
   @Input() facet: FacetStackItem<unknown>;
   @Output() delete = new EventEmitter<FacetStackItem<unknown>>();
+
+  @HostBinding('tabindex') tabindex = 0;
+
+  @HostListener('keydown.backspace')
+  onFocus() {
+    this.delete.emit(this.facet);
+  }
 }

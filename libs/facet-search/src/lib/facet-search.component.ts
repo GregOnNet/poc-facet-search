@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
@@ -13,18 +14,21 @@ import {
   FacetSelect,
   FacetStackItem
 } from './facet';
+import { FacetBricksComponent } from './facet-bricks.component';
 
 @Component({
   selector: 'poc-facet-search',
   template: `
-    <poc-facet-brick
-      [facet]="facet"
+    <poc-facet-bricks
+      [bricks]="context.facetStack"
+      [focusable]="brickAfterFocusable"
       (delete)="remove($event)"
-      *ngFor="let facet of context.facetStack"
-    ></poc-facet-brick>
+    ></poc-facet-bricks>
     <input
       type="text"
+      #brickAfterFocusable
       [formControl]="inputSearch"
+      (keydown.ArrowLeft)="tryFocusFacetBrick($event)"
       (keydown.enter)="setValue($event.target.value)"
       (keydown.backspace)="removeLastIfEmpty($event.target.value)"
     />
@@ -52,6 +56,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetSearchComponent implements OnInit {
+  @ViewChild(FacetBricksComponent, { static: true })
+  facetBricks: FacetBricksComponent;
+
   readonly inputSearch = new FormControl();
   context = new FacetContext();
 
@@ -72,18 +79,22 @@ export class FacetSearchComponent implements OnInit {
 
   remove(facet: FacetStackItem<unknown>) {
     this.context.remove(facet);
-    this.unscope();
   }
 
   removeLastIfEmpty(text: string) {
     if (text) {
       return;
     }
+
     this.context.removeLast();
   }
 
-  unscope() {
-    this.context.unscope();
+  tryFocusFacetBrick(some: any) {
+    if (some.target.selectionStart > 1) {
+      return;
+    }
+
+    this.facetBricks.focus();
   }
 }
 
