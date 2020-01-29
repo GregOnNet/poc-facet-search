@@ -25,10 +25,6 @@ import { FacetStackItem } from './facet';
         padding: 4px;
       }
 
-      :host:focus {
-        border: 1px solid red;
-      }
-
       .brick-label {
         color: #3c3c3c;
         padding-right: 4px;
