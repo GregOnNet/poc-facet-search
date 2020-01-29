@@ -27,32 +27,44 @@ import {
       (delete)="remove($event)"
     ></poc-facet-bricks>
     <input
-      type="text"
-      placeholder="Search..."
+      cdkOverlayOrigin
       #brickAfterFocusable
+      #facetSearchOverlayTrigger="cdkOverlayOrigin"
       [formControl]="inputSearch"
+      (focus)="openOverlay()"
       (keydown.enter)="setValue($event.target.value)"
       (keydown.ArrowLeft)="tryFocusFacetBrick($event)"
       (keydown.backspace)="tryFocusFacetBrick($event)"
+      type="text"
+      placeholder="Search..."
     />
-    <div class="search-additions">
-      <strong>Facets</strong>
-      <button
-        *ngFor="let facet of context.options$ | async"
-        (click)="scope(facet)"
-      >
-        {{ facet.label }}
-      </button>
 
-      <strong>Options</strong>
-      <button
-        *ngFor="let option of context.valueOptions$ | async"
-        (click)="setValue(option)"
-      >
-        {{ option.label }}
-      </button>
-      <hr />
-    </div>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="facetSearchOverlayTrigger"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      (backdropClick)="closeOverlay()"
+      (detach)="closeOverlay()"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    >
+      <mat-selection-list style="background-color:#ffffff">
+        <mat-list-option
+          *ngFor="let facet of context.options$ | async"
+          (keydown.enter)="scope(facet)"
+          (click)="scope(facet)"
+        >
+          {{ facet.label }}
+        </mat-list-option>
+        <mat-list-option
+          *ngFor="let valueOption of context.valueOptions$ | async"
+          (keydown.enter)="setValue(valueOption)"
+          (click)="setValue(valueOption)"
+        >
+          {{ valueOption.label }}
+        </mat-list-option>
+      </mat-selection-list>
+    </ng-template>
   `,
   styles: [
     `
@@ -64,6 +76,10 @@ import {
       .search-additions {
         margin-top: 16px;
       }
+
+      ::ng-deep.mat-pseudo-checkbox {
+        display: none !important;
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -72,6 +88,7 @@ export class FacetSearchComponent implements OnInit {
   readonly inputSearch = new FormControl();
   readonly inputAutocomplete = new FormControl();
 
+  isOpen = false;
   context = new FacetContext();
 
   @ViewChild(FacetBricksComponent, { static: true })
@@ -109,6 +126,14 @@ export class FacetSearchComponent implements OnInit {
     }
 
     this.facetBricks.focus();
+  }
+
+  openOverlay() {
+    this.isOpen = true;
+  }
+
+  closeOverlay() {
+    this.isOpen = false;
   }
 }
 
