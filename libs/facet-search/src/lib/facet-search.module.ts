@@ -7,7 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FacetBrickComponent } from './facet-brick.component';
 import { FacetBricksComponent } from './facet-bricks.component';
-import { FacetContextOptionFilterPipe } from './facet-context-option-filter.pipe';
 import { FacetLabelsPipe } from './facet-labels.pipe';
 import { FacetSearchComponent } from './facet-search.component';
 import { FacetValueLabelPipe } from './facet-value-label.pipe';
@@ -25,7 +24,6 @@ import { FacetValueLabelPipe } from './facet-value-label.pipe';
     FacetBrickComponent,
     FacetBricksComponent,
     FacetSearchComponent,
-    FacetContextOptionFilterPipe,
     FacetLabelsPipe,
     FacetValueLabelPipe
   ],

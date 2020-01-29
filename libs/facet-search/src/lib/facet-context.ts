@@ -13,9 +13,11 @@ export class FacetContext {
 
   private readonly facetStack$$ = new BehaviorSubject<Facet<unknown>[]>([]);
 
-  facets$ = this.facets$$.asObservable();
-  facetStack$ = this.facetStack$$.asObservable();
-  facetOptions$ = this.facetOptions$$.pipe(switchMap(options => of(options)));
+  facets$ = this.facetStack$$.asObservable();
+  facetOptions$ = this.facets$$.asObservable();
+  facetValueOptions$ = this.facetOptions$$.pipe(
+    switchMap(options => of(options))
+  );
 
   get snapshots() {
     return {
@@ -137,10 +139,6 @@ function generateId(): string {
     chr4() +
     chr4()
   );
-}
-
-export interface FacetMenuItem {
-  label: string;
 }
 
 export type FacetSearchConfiguration = Array<

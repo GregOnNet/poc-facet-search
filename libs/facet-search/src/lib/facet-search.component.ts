@@ -24,7 +24,7 @@ import {
   selector: 'poc-facet-search',
   template: `
     <poc-facet-bricks
-      [bricks]="context.facetStack$ | async"
+      [bricks]="context.facets$ | async"
       [focusable]="brickAfterFocusable"
       (delete)="remove($event)"
     ></poc-facet-bricks>
@@ -40,7 +40,7 @@ import {
     <div class="search-additions">
       <strong>Facets</strong>
       <button
-        *ngFor="let facet of context.facets$ | async"
+        *ngFor="let facet of context.facetOptions$ | async"
         (click)="scope(facet)"
       >
         {{ facet.label }}
@@ -48,7 +48,7 @@ import {
 
       <strong>Options</strong>
       <button
-        *ngFor="let option of context.facetOptions$ | async"
+        *ngFor="let option of context.facetValueOptions$ | async"
         (click)="setValue(option)"
       >
         {{ option.label }}
