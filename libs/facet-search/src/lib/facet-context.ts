@@ -21,7 +21,7 @@ export class FacetContext {
 
   get snapshots() {
     return {
-      facetStack: this.facetStack$$.getValue()
+      facets: this.facetStack$$.getValue()
     };
   }
 
@@ -31,8 +31,6 @@ export class FacetContext {
   }
 
   scope(facet: FacetGroup | FacetFreeText | FacetSelect<unknown>): void {
-    let stackSnapshot = this.facetStack$$.getValue();
-
     if (isFacetSelect(facet)) {
       this.facets$$.next([]);
       this.facetOptions$$.next(facet.options);
@@ -44,24 +42,24 @@ export class FacetContext {
       this.facetOptions$$.next([]);
     }
 
-    // get most recent value, without value
-    // add label to it
-    let itemWithoutValue = stackSnapshot.find(item => !item.value);
+    let itemWithoutValue = this.snapshots.facets.find(item => !item.value);
 
     if (!itemWithoutValue) {
       itemWithoutValue = { label: facet.label, id: generateId() };
-      this.facetStack$$.next([...stackSnapshot, itemWithoutValue]);
+      this.facetStack$$.next([...this.snapshots.facets, itemWithoutValue]);
 
-      stackSnapshot = this.facetStack$$.getValue();
+      this.snapshots.facets = this.facetStack$$.getValue();
     } else {
       itemWithoutValue.labelAdditions = itemWithoutValue.labelAdditions
         ? [...itemWithoutValue.labelAdditions, facet.label]
         : [facet.label];
 
-      stackSnapshot[stackSnapshot.length - 1] = itemWithoutValue;
+      this.snapshots.facets[
+        this.snapshots.facets.length - 1
+      ] = itemWithoutValue;
     }
 
-    this.facetStack$$.next([...stackSnapshot]);
+    this.facetStack$$.next([...this.snapshots.facets]);
   }
 
   unscope(): void {
@@ -71,20 +69,23 @@ export class FacetContext {
 
   setValue(value: any): void {
     this.unscope();
-    const stackSnapshot = this.facetStack$$.getValue();
-
-    if (stackSnapshot.length < 1 || lastFacetAlreadyHasAValue(stackSnapshot)) {
-      stackSnapshot.push({ label: 'Term', value, id: generateId() });
+    if (
+      this.snapshots.facets.length < 1 ||
+      lastFacetAlreadyHasAValue(this.snapshots.facets)
+    ) {
+      this.snapshots.facets.push({ label: 'Term', value, id: generateId() });
     } else {
-      const last = { ...stackSnapshot[stackSnapshot.length - 1] };
+      const last = {
+        ...this.snapshots.facets[this.snapshots.facets.length - 1]
+      };
 
       last.id = generateId();
       last.value = value;
 
-      stackSnapshot[stackSnapshot.length - 1] = last;
+      this.snapshots.facets[this.snapshots.facets.length - 1] = last;
     }
 
-    this.facetStack$$.next(stackSnapshot);
+    this.facetStack$$.next(this.snapshots.facets);
 
     function lastFacetAlreadyHasAValue(facetStack: Facet<unknown>[]): boolean {
       if (!Array.isArray(facetStack) || facetStack.length < 1) {
