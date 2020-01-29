@@ -3,19 +3,23 @@ import { switchMap } from 'rxjs/operators';
 
 export class FacetContext {
   private facetGroup: FacetGroup;
-  private facets$$ = new BehaviorSubject<
+  private readonly facets$$ = new BehaviorSubject<
     Array<FacetGroup | FacetFreeText | FacetSelect<unknown>>
   >([]);
   private facetOptions$$ = new BehaviorSubject<
     FacetOption<unknown>[] | Observable<FacetOption<unknown>[]>
   >([]);
 
-  facetStack: FacetStackItem<unknown>[] = [];
+  private readonly facetStack$$ = new BehaviorSubject<
+    FacetStackItem<unknown>[]
+  >([]);
+
   facetOptionsSnapshot:
     | FacetOption<unknown>[]
     | Observable<FacetOption<unknown>[]>;
 
   facets$ = this.facets$$.asObservable();
+  facetStack$ = this.facetStack$$.asObservable();
   facetOptions$ = this.facetOptions$$.pipe(switchMap(options => of(options)));
 
   configure(facetGroup: FacetGroup) {
@@ -24,6 +28,8 @@ export class FacetContext {
   }
 
   scope(facet: FacetGroup | FacetFreeText | FacetSelect<unknown>): void {
+    let stackSnapshot = this.facetStack$$.getValue();
+
     if (isFacetSelect(facet)) {
       this.facets$$.next([]);
       this.facetOptions$$.next(facet.options);
@@ -37,17 +43,22 @@ export class FacetContext {
 
     // get most recent value, without value
     // add label to it
-    let itemWithoutValue = this.facetStack.find(item => !item.value);
+    let itemWithoutValue = stackSnapshot.find(item => !item.value);
 
     if (!itemWithoutValue) {
-      itemWithoutValue = { label: facet.label, index: 0 };
-      this.facetStack = [...this.facetStack, itemWithoutValue];
+      itemWithoutValue = { label: facet.label, id: generateId() };
+      this.facetStack$$.next([...stackSnapshot, itemWithoutValue]);
+
+      stackSnapshot = this.facetStack$$.getValue();
     } else {
       itemWithoutValue.labelAdditions = itemWithoutValue.labelAdditions
         ? [...itemWithoutValue.labelAdditions, facet.label]
         : [facet.label];
-      this.facetStack[this.facetStack.length - 1] = itemWithoutValue;
+
+      stackSnapshot[stackSnapshot.length - 1] = itemWithoutValue;
     }
+
+    this.facetStack$$.next(stackSnapshot);
 
     this.facetOptionsSnapshot = this.facetOptions$$.getValue();
   }
@@ -59,23 +70,35 @@ export class FacetContext {
 
   setValue(value: any): void {
     this.unscope();
+    const stackSnapshot = this.facetStack$$.getValue();
 
-    if (this.facetStack.length < 1) {
-      this.facetStack.push({ label: 'Term', value, index: 0 });
+    if (stackSnapshot.length < 1) {
+      stackSnapshot.push({ label: 'Term', value, id: generateId() });
+      this.facetStack$$.next(stackSnapshot);
+    } else {
+      const last = { ...stackSnapshot[stackSnapshot.length - 1] };
+
+      last.id = generateId();
+      last.value = value;
+
+      stackSnapshot[stackSnapshot.length - 1] = last;
+      this.facetStack$$.next(stackSnapshot);
     }
-
-    this.facetStack[this.facetStack.length - 1].index =
-      this.facetStack.length - 1;
-    this.facetStack[this.facetStack.length - 1].value = value;
   }
 
   remove(facet: FacetStackItem<unknown>): void {
-    this.facetStack.splice(facet.index, 1);
+    this.facetStack$$.next(
+      this.facetStack$$
+        .getValue()
+        .filter(stackItem => stackItem.id !== facet.id)
+    );
     this.unscope();
   }
 
   removeLast() {
-    this.remove(this.facetStack[this.facetStack.length - 1]);
+    const stack = this.facetStack$$.getValue();
+    const last = stack[stack.length - 1];
+    this.remove(last);
   }
 }
 
@@ -88,6 +111,29 @@ function isFacetSelect(value: any): value is FacetSelect<unknown> {
 
 function isFacetGroup(value: any): value is FacetGroup {
   return Array.isArray(value.children);
+}
+
+function generateId(): string {
+  function chr4() {
+    return Math.random()
+      .toString(16)
+      .slice(-4);
+  }
+
+  return (
+    chr4() +
+    chr4() +
+    '-' +
+    chr4() +
+    '-' +
+    chr4() +
+    '-' +
+    chr4() +
+    '-' +
+    chr4() +
+    chr4() +
+    chr4()
+  );
 }
 
 export interface Facet {
@@ -105,7 +151,7 @@ export interface FacetGroup {
 }
 
 export interface FacetStackItem<T> {
-  index: number;
+  id: string;
   label: string;
   labelAdditions?: string[];
   value?: T;

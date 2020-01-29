@@ -20,7 +20,7 @@ import { FacetBricksComponent } from './facet-bricks.component';
   selector: 'poc-facet-search',
   template: `
     <poc-facet-bricks
-      [bricks]="context.facetStack"
+      [bricks]="context.facetStack$ | async"
       [focusable]="brickAfterFocusable"
       (delete)="remove($event)"
     ></poc-facet-bricks>
@@ -49,9 +49,6 @@ import { FacetBricksComponent } from './facet-bricks.component';
     >
       {{ option.label }}
     </button>
-
-    <hr />
-    <button (click)="unscope()">Reset</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
