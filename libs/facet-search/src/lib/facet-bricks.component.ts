@@ -19,7 +19,7 @@ import { FacetBrickComponent } from './facet-brick.component';
     <poc-facet-brick
       [facet]="brick"
       *ngFor="let brick of bricks"
-      (delete)="delete.emit($event)"
+      (delete)="emitDelete($event)"
       [labelField]="labelField"
     ></poc-facet-brick>
   `
@@ -73,6 +73,11 @@ export class FacetBricksComponent {
     } else if (this.focusable && this.focusable) {
       this.focusable.focus();
     }
+  }
+
+  emitDelete(facet: FacetStackItem<unknown>) {
+    this.delete.emit(facet);
+    this.focusRight();
   }
 
   focus() {
