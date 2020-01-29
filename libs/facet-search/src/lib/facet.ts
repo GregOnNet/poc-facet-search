@@ -14,13 +14,15 @@ export class FacetContext {
     FacetStackItem<unknown>[]
   >([]);
 
-  facetOptionsSnapshot:
-    | FacetOption<unknown>[]
-    | Observable<FacetOption<unknown>[]>;
-
   facets$ = this.facets$$.asObservable();
   facetStack$ = this.facetStack$$.asObservable();
   facetOptions$ = this.facetOptions$$.pipe(switchMap(options => of(options)));
+
+  get snapshots() {
+    return {
+      facetStack: this.facetStack$$.getValue()
+    };
+  }
 
   configure(facetGroup: FacetGroup) {
     this.facets$$.next(facetGroup.children);
@@ -59,8 +61,6 @@ export class FacetContext {
     }
 
     this.facetStack$$.next([...stackSnapshot]);
-
-    this.facetOptionsSnapshot = this.facetOptions$$.getValue();
   }
 
   unscope(): void {

@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'faceted-search-app';
+  facets = null;
+
+  printFacets(facets: any) {
+    this.facets = facets;
+  }
 }

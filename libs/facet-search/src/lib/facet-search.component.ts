@@ -2,8 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -54,16 +56,17 @@ import { FacetBricksComponent } from './facet-bricks.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetSearchComponent implements OnInit {
+  readonly inputSearch = new FormControl();
+  context = new FacetContext();
+
   @ViewChild(FacetBricksComponent, { static: true })
   facetBricks: FacetBricksComponent;
 
   @ViewChild('brickAfterFocusable', { static: true })
   inputSearchElement: ElementRef<HTMLInputElement>;
 
-  readonly inputSearch = new FormControl();
-  context = new FacetContext();
-
   @Input() facetGroup: FacetGroup = tempFacetGroup();
+  @Output() update = new EventEmitter<FacetStackItem<unknown>[]>();
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
@@ -77,6 +80,7 @@ export class FacetSearchComponent implements OnInit {
     this.context.setValue(option);
     this.inputSearch.reset();
     this.inputSearchElement.nativeElement.focus();
+    this.update.emit(this.context.snapshots.facetStack);
   }
 
   remove(facet: FacetStackItem<unknown>) {

@@ -1,1 +1,7 @@
-<poc-facet-search></poc-facet-search>
+<poc-facet-search (update)="printFacets($event)"></poc-facet-search>
+
+<h2>
+  Current search
+</h2>
+
+<pre><code>{{ facets | json }}</code></pre>
