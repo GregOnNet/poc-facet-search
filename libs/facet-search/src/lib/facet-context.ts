@@ -45,12 +45,8 @@ export class FacetContext {
         ? [...itemWithoutValue.labelAdditions, facet.label]
         : [facet.label];
 
-      this.snapshots.facets[
-        this.snapshots.facets.length - 1
-      ] = itemWithoutValue;
+      this.facets$$.next(setLast(this.snapshots.facets, itemWithoutValue));
     }
-
-    this.facets$$.next([...this.snapshots.facets]);
   }
 
   unscope(): void {
@@ -64,19 +60,18 @@ export class FacetContext {
       this.snapshots.facets.length < 1 ||
       lastFacetAlreadyHasAValue(this.snapshots.facets)
     ) {
-      this.snapshots.facets.push({ label: 'Term', value, id: generateId() });
+      this.facets$$.next([
+        ...this.snapshots.facets,
+        { label: 'Term', value, id: generateId() }
+      ]);
     } else {
-      const last = {
-        ...this.snapshots.facets[this.snapshots.facets.length - 1]
-      };
+      const last = getLast(this.snapshots.facets);
 
       last.id = generateId();
       last.value = value;
 
-      this.snapshots.facets[this.snapshots.facets.length - 1] = last;
+      this.facets$$.next(setLast(this.snapshots.facets, last));
     }
-
-    this.facets$$.next(this.snapshots.facets);
 
     function lastFacetAlreadyHasAValue(facetStack: Facet<unknown>[]): boolean {
       if (!Array.isArray(facetStack) || facetStack.length < 1) {
@@ -106,6 +101,20 @@ function isFacetSelect(value: any): value is FacetSelect<unknown> {
 
 function isFacetGroup(value: any): value is FacetGroup {
   return Array.isArray(value.children);
+}
+
+function getLast<T>(collection: T[]): T {
+  const lastIndex = collection.length - 1;
+
+  return { ...collection[lastIndex] };
+}
+
+function setLast<T>(collection: T[], update: T): T[] {
+  const lastIndex = collection.length - 1;
+  const shallow = [...collection];
+
+  shallow[lastIndex] = update;
+  return shallow;
 }
 
 function generateId(): string {

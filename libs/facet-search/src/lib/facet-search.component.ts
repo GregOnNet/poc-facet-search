@@ -106,7 +106,7 @@ export class FacetSearchComponent implements OnInit {
   }
 
   tryFocusFacetBrick(some: any) {
-    if (some.target.selectionStart > 1) {
+    if (some.target.selectionStart >= 1) {
       return;
     }
 
