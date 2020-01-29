@@ -35,11 +35,13 @@ export class FacetContext {
       this.valueOptions$$.next([]);
     }
 
-    let itemWithoutValue = this.snapshots.facets.find(item => !item.value);
+    const itemWithoutValue = this.snapshots.facets.find(item => !item.value);
 
     if (!itemWithoutValue) {
-      itemWithoutValue = { label: facet.label, id: generateId() };
-      this.facets$$.next([...this.snapshots.facets, itemWithoutValue]);
+      this.facets$$.next([
+        ...this.snapshots.facets,
+        { label: facet.label, id: generateId() }
+      ]);
     } else {
       itemWithoutValue.labelAdditions = itemWithoutValue.labelAdditions
         ? [...itemWithoutValue.labelAdditions, facet.label]
