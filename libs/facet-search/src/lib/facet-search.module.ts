@@ -6,6 +6,7 @@ import { MatListModule } from '@angular/material/list';
 import { FacetBrickComponent } from './facet-brick.component';
 import { FacetBricksComponent } from './facet-bricks.component';
 import { FacetLabelsPipe } from './facet-labels.pipe';
+import { FacetOptionListItemComponent } from './facet-option-list-item.component';
 import { FacetSearchComponent } from './facet-search.component';
 import { FacetValueLabelPipe } from './facet-value-label.pipe';
 
@@ -14,6 +15,7 @@ import { FacetValueLabelPipe } from './facet-value-label.pipe';
   declarations: [
     FacetBrickComponent,
     FacetBricksComponent,
+    FacetOptionListItemComponent,
     FacetSearchComponent,
     FacetLabelsPipe,
     FacetValueLabelPipe

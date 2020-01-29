@@ -1,5 +1,8 @@
+import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
+import * as Keycode from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -8,7 +11,9 @@ import {
   Input,
   OnInit,
   Output,
-  ViewChild
+  QueryList,
+  ViewChild,
+  ViewChildren
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { FacetBricksComponent } from './facet-bricks.component';
@@ -19,6 +24,7 @@ import {
   FacetGroupMember,
   FacetOption
 } from './facet-context';
+import { FacetOptionListItemComponent } from './facet-option-list-item.component';
 
 @Component({
   selector: 'poc-facet-search',
@@ -34,9 +40,7 @@ import {
       #facetSearchOverlayTrigger="cdkOverlayOrigin"
       [formControl]="inputSearch"
       (focus)="openOverlay()"
-      (keydown.enter)="setValue($event.target.value)"
-      (keydown.ArrowLeft)="tryFocusFacetBrick($event)"
-      (keydown.backspace)="tryFocusFacetBrick($event)"
+      (keydown)="focusOverlay($event)"
       type="text"
       placeholder="Search..."
     />
@@ -50,22 +54,23 @@ import {
       (detach)="closeOverlay()"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
     >
-      <mat-selection-list style="background-color:#ffffff">
-        <mat-list-option
+      <div
+        class="facet-options"
+        style="display:flex; flex-direction:column;background-color:#fff; padding:16px; padding-left: 0; min-width: 200px;"
+      >
+        <poc-facet-option-list-item
+          [value]="facet"
+          tag="facet"
           *ngFor="let facet of context.options$ | async"
-          (keydown.enter)="scope(facet)"
           (click)="scope(facet)"
-        >
-          {{ facet.label }}
-        </mat-list-option>
-        <mat-list-option
+        ></poc-facet-option-list-item>
+        <poc-facet-option-list-item
+          [value]="valueOption"
+          tag="valueOption"
           *ngFor="let valueOption of context.valueOptions$ | async"
-          (keydown.enter)="setValue(valueOption)"
           (click)="setValue(valueOption)"
-        >
-          {{ valueOption.label }}
-        </mat-list-option>
-      </mat-selection-list>
+        ></poc-facet-option-list-item>
+      </div>
     </ng-template>
   `,
   styles: [
@@ -82,11 +87,22 @@ import {
       ::ng-deep.mat-pseudo-checkbox {
         display: none !important;
       }
+
+      poc-facet-option-list-item {
+        padding: 4px;
+      }
+
+      poc-facet-option-list-item.active {
+        background-color: lightblue;
+        color: #fff;
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FacetSearchComponent implements OnInit {
+export class FacetSearchComponent implements OnInit, AfterViewInit {
+  private keyManager: ActiveDescendantKeyManager<FacetOptionListItemComponent>;
+
   readonly inputSearch = new FormControl();
   readonly inputAutocomplete = new FormControl();
 
@@ -99,6 +115,9 @@ export class FacetSearchComponent implements OnInit {
   @ViewChild(FacetBricksComponent, { static: true })
   facetBricks: FacetBricksComponent;
 
+  @ViewChildren(FacetOptionListItemComponent)
+  facetOptions: QueryList<FacetOptionListItemComponent>;
+
   @ViewChild('brickAfterFocusable', { static: true })
   inputSearchElement: ElementRef<HTMLInputElement>;
 
@@ -109,6 +128,12 @@ export class FacetSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
+  }
+
+  ngAfterViewInit(): void {
+    this.keyManager = new ActiveDescendantKeyManager(this.facetOptions)
+      .withWrap()
+      .withTypeAhead();
   }
 
   scope(option: FacetGroupMember): void {
@@ -134,6 +159,7 @@ export class FacetSearchComponent implements OnInit {
       return;
     }
 
+    this.closeOverlay();
     this.facetBricks.focus();
   }
 
@@ -145,7 +171,31 @@ export class FacetSearchComponent implements OnInit {
     this.isOpen = false;
   }
 
-  private updateOverlayPosition() {
+  focusOverlay(keyboardEvent: KeyboardEvent) {
+    switch (keyboardEvent.keyCode) {
+      case Keycode.UP_ARROW:
+      case Keycode.DOWN_ARROW:
+        this.keyManager.onKeydown(keyboardEvent);
+        break;
+      case Keycode.LEFT_ARROW:
+      case Keycode.BACKSPACE:
+        this.tryFocusFacetBrick(keyboardEvent);
+        break;
+      case Keycode.ENTER:
+        if (!this.keyManager.activeItem) {
+          this.setValue(this.inputSearch.value);
+        } else if (this.keyManager.activeItem.tag === 'facet') {
+          this.scope(this.keyManager.activeItem.value);
+        } else {
+          this.setValue(this.keyManager.activeItem.value as any);
+        }
+
+        this.keyManager.updateActiveItem(-1);
+        break;
+    }
+  }
+
+  updateOverlayPosition() {
     this.changeDetector.detectChanges();
     this.cdkConnectedOverlay.overlayRef.updatePosition();
   }
