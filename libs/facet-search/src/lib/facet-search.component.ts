@@ -1,5 +1,7 @@
+import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -41,9 +43,9 @@ import {
 
     <ng-template
       cdkConnectedOverlay
-      [cdkConnectedOverlayOrigin]="facetSearchOverlayTrigger"
-      [cdkConnectedOverlayOpen]="isOpen"
       [cdkConnectedOverlayHasBackdrop]="true"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayOrigin]="facetSearchOverlayTrigger"
       (backdropClick)="closeOverlay()"
       (detach)="closeOverlay()"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
@@ -91,6 +93,9 @@ export class FacetSearchComponent implements OnInit {
   isOpen = false;
   context = new FacetContext();
 
+  @ViewChild(CdkConnectedOverlay, { static: true })
+  cdkConnectedOverlay: CdkConnectedOverlay;
+
   @ViewChild(FacetBricksComponent, { static: true })
   facetBricks: FacetBricksComponent;
 
@@ -100,12 +105,15 @@ export class FacetSearchComponent implements OnInit {
   @Input() facetGroup: FacetConfiguration = tempFacetGroup();
   @Output() update = new EventEmitter<Facet<unknown>[]>();
 
+  constructor(private changeDetector: ChangeDetectorRef) {}
+
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
   }
 
   scope(option: FacetGroupMember): void {
     this.context.scope(option);
+    this.updateOverlayPosition();
   }
 
   setValue(option: FacetOption<unknown>) {
@@ -113,6 +121,7 @@ export class FacetSearchComponent implements OnInit {
     this.inputSearch.reset();
     this.inputSearchElement.nativeElement.focus();
     this.update.emit(this.context.snapshots.facets);
+    this.updateOverlayPosition();
   }
 
   remove(facet: Facet<unknown>) {
@@ -134,6 +143,11 @@ export class FacetSearchComponent implements OnInit {
 
   closeOverlay() {
     this.isOpen = false;
+  }
+
+  private updateOverlayPosition() {
+    this.changeDetector.detectChanges();
+    this.cdkConnectedOverlay.overlayRef.updatePosition();
   }
 }
 
