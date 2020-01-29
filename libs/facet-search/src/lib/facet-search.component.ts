@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   Input,
   OnInit,
   ViewChild
@@ -56,6 +57,9 @@ export class FacetSearchComponent implements OnInit {
   @ViewChild(FacetBricksComponent, { static: true })
   facetBricks: FacetBricksComponent;
 
+  @ViewChild('brickAfterFocusable', { static: true })
+  inputSearchElement: ElementRef<HTMLInputElement>;
+
   readonly inputSearch = new FormControl();
   context = new FacetContext();
 
@@ -72,6 +76,7 @@ export class FacetSearchComponent implements OnInit {
   setValue(option: FacetOption<unknown>) {
     this.context.setValue(option);
     this.inputSearch.reset();
+    this.inputSearchElement.nativeElement.focus();
   }
 
   remove(facet: FacetStackItem<unknown>) {

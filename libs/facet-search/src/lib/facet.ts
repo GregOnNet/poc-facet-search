@@ -72,9 +72,8 @@ export class FacetContext {
     this.unscope();
     const stackSnapshot = this.facetStack$$.getValue();
 
-    if (stackSnapshot.length < 1) {
+    if (stackSnapshot.length < 1 || lastFacetAlreadyHasAValue(stackSnapshot)) {
       stackSnapshot.push({ label: 'Term', value, id: generateId() });
-      this.facetStack$$.next(stackSnapshot);
     } else {
       const last = { ...stackSnapshot[stackSnapshot.length - 1] };
 
@@ -82,7 +81,20 @@ export class FacetContext {
       last.value = value;
 
       stackSnapshot[stackSnapshot.length - 1] = last;
-      this.facetStack$$.next(stackSnapshot);
+    }
+
+    this.facetStack$$.next(stackSnapshot);
+
+    function lastFacetAlreadyHasAValue(
+      facetStack: FacetStackItem<unknown>[]
+    ): boolean {
+      if (!Array.isArray(facetStack) || facetStack.length < 1) {
+        return false;
+      } else if (facetStack[facetStack.length - 1].value) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
