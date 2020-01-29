@@ -36,43 +36,12 @@ export class FacetBricksComponent {
 
   @HostListener('keydown.ArrowLeft')
   focusLeft() {
-    let leftElementIndex = -1;
-    const brickCollection = this.brickChildren.toArray();
-
-    for (let index = 0; index <= brickCollection.length - 1; index++) {
-      if (
-        this.document.activeElement === brickCollection[index].nativeElement
-      ) {
-        leftElementIndex = index - 1;
-        break;
-      }
-    }
-
-    if (!brickCollection[leftElementIndex]) {
-      return;
-    }
-
-    brickCollection[leftElementIndex].nativeElement.focus();
+    this.focusNeighbour(index => index - 1);
   }
 
   @HostListener('keydown.ArrowRight')
   focusRight() {
-    let rightElementIndex = -1;
-    const brickCollection = this.brickChildren.toArray();
-    for (let index = 0; index <= brickCollection.length - 1; index++) {
-      if (
-        this.document.activeElement === brickCollection[index].nativeElement
-      ) {
-        rightElementIndex = index + 1;
-        break;
-      }
-    }
-
-    if (brickCollection[rightElementIndex]) {
-      brickCollection[rightElementIndex].nativeElement.focus();
-    } else if (this.focusable && this.focusable) {
-      this.focusable.focus();
-    }
+    this.focusNeighbour(index => index + 1);
   }
 
   emitDelete(facet: FacetStackItem<unknown>) {
@@ -82,5 +51,24 @@ export class FacetBricksComponent {
 
   focus() {
     this.brickChildren.last.nativeElement.focus();
+  }
+
+  private focusNeighbour(getNeighbourIndex: (index: number) => number): void {
+    let neighbourIndex = -1;
+    const brickCollection = this.brickChildren.toArray();
+    for (let index = 0; index <= brickCollection.length - 1; index++) {
+      if (
+        this.document.activeElement === brickCollection[index].nativeElement
+      ) {
+        neighbourIndex = getNeighbourIndex(index);
+        break;
+      }
+    }
+
+    if (brickCollection[neighbourIndex]) {
+      brickCollection[neighbourIndex].nativeElement.focus();
+    } else if (this.focusable && this.focusable) {
+      this.focusable.focus();
+    }
   }
 }
