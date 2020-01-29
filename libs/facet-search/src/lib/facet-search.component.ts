@@ -12,12 +12,10 @@ import { FormControl } from '@angular/forms';
 import { FacetBricksComponent } from './facet-bricks.component';
 import {
   Facet,
+  FacetConfiguration,
   FacetContext,
-  FacetFreeText,
-  FacetGroup,
-  FacetOption,
-  FacetSearchConfiguration,
-  FacetSelect
+  FacetGroupMember,
+  FacetOption
 } from './facet-context';
 
 @Component({
@@ -82,14 +80,14 @@ export class FacetSearchComponent implements OnInit {
   @ViewChild('brickAfterFocusable', { static: true })
   inputSearchElement: ElementRef<HTMLInputElement>;
 
-  @Input() facetGroup: FacetSearchConfiguration = tempFacetGroup();
+  @Input() facetGroup: FacetConfiguration = tempFacetGroup();
   @Output() update = new EventEmitter<Facet<unknown>[]>();
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
   }
 
-  scope(option: FacetGroup | FacetFreeText | FacetSelect<unknown>): void {
+  scope(option: FacetGroupMember): void {
     this.context.scope(option);
   }
 
@@ -114,7 +112,7 @@ export class FacetSearchComponent implements OnInit {
   }
 }
 
-function tempFacetGroup(): FacetSearchConfiguration {
+function tempFacetGroup(): FacetConfiguration {
   return [
     { label: 'Project' },
     {

@@ -1,9 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Facet } from './facet-context';
 
-@Pipe({
-  name: 'facetValueLabel'
-})
+@Pipe({ name: 'facetValueLabel' })
 export class FacetValueLabelPipe implements PipeTransform {
   transform(facet: Facet<unknown>, labelField: string): string {
     if (!facet || !facet.value) {
