@@ -11,7 +11,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FacetBrickComponent } from './facet-brick.component';
-import { FacetStackItem } from './facet-context';
+import { Facet } from './facet-context';
 
 @Component({
   selector: 'poc-facet-bricks',
@@ -29,8 +29,8 @@ export class FacetBricksComponent {
   brickChildren: QueryList<ElementRef<HTMLElement>>;
 
   @Input() focusable: HTMLElement;
-  @Input() bricks: FacetStackItem<unknown>[];
-  @Output() delete = new EventEmitter<FacetStackItem<unknown>>();
+  @Input() bricks: Facet<unknown>[];
+  @Output() delete = new EventEmitter<Facet<unknown>>();
   @Input() labelField = 'label';
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
@@ -44,7 +44,7 @@ export class FacetBricksComponent {
     this.focusNeighbour(index => index + 1);
   }
 
-  emitDelete(facet: FacetStackItem<unknown>) {
+  emitDelete(facet: Facet<unknown>) {
     this.delete.emit(facet);
     this.focusRight();
   }

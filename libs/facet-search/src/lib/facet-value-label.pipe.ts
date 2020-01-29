@@ -1,11 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FacetStackItem } from './facet-context';
+import { Facet } from './facet-context';
 
 @Pipe({
   name: 'facetValueLabel'
 })
 export class FacetValueLabelPipe implements PipeTransform {
-  transform(facet: FacetStackItem<unknown>, labelField: string): string {
+  transform(facet: Facet<unknown>, labelField: string): string {
     if (!facet || !facet.value) {
       return '';
     }

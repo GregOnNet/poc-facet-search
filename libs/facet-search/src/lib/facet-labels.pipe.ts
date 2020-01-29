@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FacetStackItem } from './facet-context';
+import { Facet } from './facet-context';
 
 @Pipe({
   name: 'facetLabels',
   pure: false
 })
 export class FacetLabelsPipe implements PipeTransform {
-  transform(facet: FacetStackItem<unknown>): string[] {
+  transform(facet: Facet<unknown>): string[] {
     if (!facet) {
       return [];
     }

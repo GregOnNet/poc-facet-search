@@ -6,7 +6,7 @@ import {
   Input,
   Output
 } from '@angular/core';
-import { FacetStackItem } from './facet-context';
+import { Facet } from './facet-context';
 
 @Component({
   selector: 'poc-facet-brick',
@@ -33,9 +33,9 @@ import { FacetStackItem } from './facet-context';
   ]
 })
 export class FacetBrickComponent {
-  @Input() facet: FacetStackItem<unknown>;
+  @Input() facet: Facet<unknown>;
   @Input() labelField = 'label';
-  @Output() delete = new EventEmitter<FacetStackItem<unknown>>();
+  @Output() delete = new EventEmitter<Facet<unknown>>();
 
   @HostBinding('tabindex') tabindex = 0;
 

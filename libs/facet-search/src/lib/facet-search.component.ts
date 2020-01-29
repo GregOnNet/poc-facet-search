@@ -11,13 +11,13 @@ import {
 import { FormControl } from '@angular/forms';
 import { FacetBricksComponent } from './facet-bricks.component';
 import {
+  Facet,
   FacetContext,
   FacetFreeText,
   FacetGroup,
   FacetOption,
   FacetSearchConfiguration,
-  FacetSelect,
-  FacetStackItem
+  FacetSelect
 } from './facet-context';
 
 @Component({
@@ -53,6 +53,7 @@ import {
       >
         {{ option.label }}
       </button>
+      <hr />
     </div>
   `,
   styles: [
@@ -71,6 +72,8 @@ import {
 })
 export class FacetSearchComponent implements OnInit {
   readonly inputSearch = new FormControl();
+  readonly inputAutocomplete = new FormControl();
+
   context = new FacetContext();
 
   @ViewChild(FacetBricksComponent, { static: true })
@@ -80,7 +83,7 @@ export class FacetSearchComponent implements OnInit {
   inputSearchElement: ElementRef<HTMLInputElement>;
 
   @Input() facetGroup: FacetSearchConfiguration = tempFacetGroup();
-  @Output() update = new EventEmitter<FacetStackItem<unknown>[]>();
+  @Output() update = new EventEmitter<Facet<unknown>[]>();
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
@@ -97,7 +100,7 @@ export class FacetSearchComponent implements OnInit {
     this.update.emit(this.context.snapshots.facetStack);
   }
 
-  remove(facet: FacetStackItem<unknown>) {
+  remove(facet: Facet<unknown>) {
     this.context.remove(facet);
     this.update.emit(this.context.snapshots.facetStack);
   }

@@ -11,9 +11,7 @@ export class FacetContext {
     FacetOption<unknown>[] | Observable<FacetOption<unknown>[]>
   >([]);
 
-  private readonly facetStack$$ = new BehaviorSubject<
-    FacetStackItem<unknown>[]
-  >([]);
+  private readonly facetStack$$ = new BehaviorSubject<Facet<unknown>[]>([]);
 
   facets$ = this.facets$$.asObservable();
   facetStack$ = this.facetStack$$.asObservable();
@@ -86,9 +84,7 @@ export class FacetContext {
 
     this.facetStack$$.next(stackSnapshot);
 
-    function lastFacetAlreadyHasAValue(
-      facetStack: FacetStackItem<unknown>[]
-    ): boolean {
+    function lastFacetAlreadyHasAValue(facetStack: Facet<unknown>[]): boolean {
       if (!Array.isArray(facetStack) || facetStack.length < 1) {
         return false;
       } else if (facetStack[facetStack.length - 1].value) {
@@ -99,7 +95,7 @@ export class FacetContext {
     }
   }
 
-  remove(facet: FacetStackItem<unknown>): void {
+  remove(facet: Facet<unknown>): void {
     this.facetStack$$.next(
       this.facetStack$$
         .getValue()
@@ -143,11 +139,6 @@ function generateId(): string {
   );
 }
 
-export interface Facet {
-  label: string;
-  value?: any | any[];
-}
-
 export interface FacetMenuItem {
   label: string;
 }
@@ -161,7 +152,7 @@ export interface FacetGroup {
   children: Array<FacetGroup | FacetFreeText | FacetSelect<unknown>>;
 }
 
-export interface FacetStackItem<T> {
+export interface Facet<T> {
   id: string;
   label: string;
   labelAdditions?: string[];
