@@ -40,7 +40,7 @@ import {
     <div class="search-additions">
       <strong>Facets</strong>
       <button
-        *ngFor="let facet of context.facetOptions$ | async"
+        *ngFor="let facet of context.options$ | async"
         (click)="scope(facet)"
       >
         {{ facet.label }}
@@ -48,7 +48,7 @@ import {
 
       <strong>Options</strong>
       <button
-        *ngFor="let option of context.facetValueOptions$ | async"
+        *ngFor="let option of context.valueOptions$ | async"
         (click)="setValue(option)"
       >
         {{ option.label }}
@@ -97,12 +97,12 @@ export class FacetSearchComponent implements OnInit {
     this.context.setValue(option);
     this.inputSearch.reset();
     this.inputSearchElement.nativeElement.focus();
-    this.update.emit(this.context.snapshots.facetStack);
+    this.update.emit(this.context.snapshots.facets);
   }
 
   remove(facet: Facet<unknown>) {
     this.context.remove(facet);
-    this.update.emit(this.context.snapshots.facetStack);
+    this.update.emit(this.context.snapshots.facets);
   }
 
   tryFocusFacetBrick(some: any) {
