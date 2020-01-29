@@ -16,6 +16,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { of } from 'rxjs';
 import { FacetBricksComponent } from './facet-bricks.component';
 import {
   Facet,
@@ -128,6 +129,7 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
+    this.context.valueOptions$.subscribe(console.log);
   }
 
   ngAfterViewInit(): void {
@@ -214,7 +216,7 @@ function tempFacetGroup(): FacetConfiguration {
     {
       label: 'Company',
       children: [
-        { label: 'Type', options: [{ label: 'AG', value: 'AG' }] },
+        { label: 'Type', options: of([{ label: 'AG', value: 'AG' }]) },
         { label: 'Name' },
         {
           label: 'Projects shown',

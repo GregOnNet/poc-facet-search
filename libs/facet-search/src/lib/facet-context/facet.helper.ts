@@ -1,10 +1,11 @@
+import { isObservable } from 'rxjs';
 import { FacetFreeText, FacetGroup, FacetSelect } from './typings';
 
 export function isFacetFreeText(value: any): value is FacetFreeText {
   return !value.children && !value.options;
 }
 export function isFacetSelect(value: any): value is FacetSelect<unknown> {
-  return Array.isArray(value.options);
+  return Array.isArray(value.options) || isObservable(value.options);
 }
 
 export function isFacetGroup(value: any): value is FacetGroup {

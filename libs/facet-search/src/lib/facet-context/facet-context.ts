@@ -1,4 +1,4 @@
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, isObservable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { getLast, setLast } from './collection.helper';
 import {
@@ -23,7 +23,9 @@ export class FacetContext {
 
   facets$ = this.facets$$.asObservable();
   options$ = this.options$$.asObservable();
-  valueOptions$ = this.valueOptions$$.pipe(switchMap(options => of(options)));
+  valueOptions$ = this.valueOptions$$.pipe(
+    switchMap(options => (isObservable(options) ? options : of(options)))
+  );
 
   get snapshots() {
     return {

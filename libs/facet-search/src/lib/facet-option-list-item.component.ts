@@ -40,6 +40,6 @@ export class FacetOptionListItemComponent implements Highlightable {
   }
 
   getLabel() {
-    return this.facet.label;
+    return this.value.label;
   }
 }
