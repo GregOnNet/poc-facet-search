@@ -20,9 +20,9 @@ import { FacetBrickComponent } from './facet-brick.component';
       [facet]="brick"
       *ngFor="let brick of bricks"
       (delete)="delete.emit($event)"
+      [labelField]="labelField"
     ></poc-facet-brick>
-  `,
-  styles: [``]
+  `
 })
 export class FacetBricksComponent {
   @ViewChildren(FacetBrickComponent, { read: ElementRef })
@@ -31,7 +31,7 @@ export class FacetBricksComponent {
   @Input() focusable: HTMLElement;
   @Input() bricks: FacetStackItem<unknown>[];
   @Output() delete = new EventEmitter<FacetStackItem<unknown>>();
-
+  @Input() labelField = 'label';
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   @HostListener('keydown.ArrowLeft')

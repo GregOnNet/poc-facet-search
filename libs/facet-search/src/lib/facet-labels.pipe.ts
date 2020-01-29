@@ -9,7 +9,6 @@ export class FacetLabelsPipe implements PipeTransform {
     if (!facet) {
       return [];
     }
-    console.log(facet);
 
     const additions = Array.isArray(facet.labelAdditions)
       ? facet.labelAdditions

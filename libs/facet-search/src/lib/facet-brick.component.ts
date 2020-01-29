@@ -14,7 +14,7 @@ import { FacetStackItem } from './facet';
     <span *ngFor="let label of facet | facetLabels" class="brick-label">{{
       label
     }}</span>
-    <span>{{ facet.value }}</span>
+    <span>{{ facet | facetValueLabel: labelField }}</span>
     <button (click)="delete.emit(facet)">X</button>
   `,
   styles: [
@@ -38,6 +38,7 @@ import { FacetStackItem } from './facet';
 })
 export class FacetBrickComponent {
   @Input() facet: FacetStackItem<unknown>;
+  @Input() labelField = 'label';
   @Output() delete = new EventEmitter<FacetStackItem<unknown>>();
 
   @HostBinding('tabindex') tabindex = 0;

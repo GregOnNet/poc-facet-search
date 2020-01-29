@@ -58,7 +58,7 @@ export class FacetContext {
       stackSnapshot[stackSnapshot.length - 1] = itemWithoutValue;
     }
 
-    this.facetStack$$.next(stackSnapshot);
+    this.facetStack$$.next([...stackSnapshot]);
 
     this.facetOptionsSnapshot = this.facetOptions$$.getValue();
   }
