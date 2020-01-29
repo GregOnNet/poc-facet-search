@@ -177,6 +177,7 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
     switch (keyboardEvent.keyCode) {
       case Keycode.UP_ARROW:
       case Keycode.DOWN_ARROW:
+        this.isOpen = true;
         this.keyManager.onKeydown(keyboardEvent);
         break;
       case Keycode.LEFT_ARROW:
