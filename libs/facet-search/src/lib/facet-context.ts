@@ -2,7 +2,8 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 export class FacetContext {
-  private facetGroup: FacetGroup;
+  private facetSearchConfiguration: FacetSearchConfiguration;
+
   private readonly facets$$ = new BehaviorSubject<
     Array<FacetGroup | FacetFreeText | FacetSelect<unknown>>
   >([]);
@@ -24,9 +25,9 @@ export class FacetContext {
     };
   }
 
-  configure(facetGroup: FacetGroup) {
-    this.facets$$.next(facetGroup.children);
-    this.facetGroup = facetGroup;
+  configure(configuration: FacetSearchConfiguration) {
+    this.facets$$.next(configuration);
+    this.facetSearchConfiguration = configuration;
   }
 
   scope(facet: FacetGroup | FacetFreeText | FacetSelect<unknown>): void {
@@ -64,7 +65,7 @@ export class FacetContext {
   }
 
   unscope(): void {
-    this.facets$$.next(this.facetGroup.children);
+    this.facets$$.next(this.facetSearchConfiguration);
     this.facetOptions$$.next([]);
   }
 
@@ -105,12 +106,6 @@ export class FacetContext {
         .filter(stackItem => stackItem.id !== facet.id)
     );
     this.unscope();
-  }
-
-  removeLast() {
-    const stack = this.facetStack$$.getValue();
-    const last = stack[stack.length - 1];
-    this.remove(last);
   }
 }
 
@@ -156,6 +151,10 @@ export interface Facet {
 export interface FacetMenuItem {
   label: string;
 }
+
+export type FacetSearchConfiguration = Array<
+  FacetGroup | FacetFreeText | FacetSelect<unknown>
+>;
 
 export interface FacetGroup {
   label: string;

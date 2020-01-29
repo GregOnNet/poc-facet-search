@@ -9,15 +9,16 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { FacetBricksComponent } from './facet-bricks.component';
 import {
   FacetContext,
   FacetFreeText,
   FacetGroup,
   FacetOption,
+  FacetSearchConfiguration,
   FacetSelect,
   FacetStackItem
-} from './facet';
-import { FacetBricksComponent } from './facet-bricks.component';
+} from './facet-context';
 
 @Component({
   selector: 'poc-facet-search',
@@ -31,9 +32,9 @@ import { FacetBricksComponent } from './facet-bricks.component';
       type="text"
       #brickAfterFocusable
       [formControl]="inputSearch"
-      (keydown.ArrowLeft)="tryFocusFacetBrick($event)"
       (keydown.enter)="setValue($event.target.value)"
-      (keydown.backspace)="removeLastIfEmpty($event.target.value)"
+      (keydown.ArrowLeft)="tryFocusFacetBrick($event)"
+      (keydown.backspace)="tryFocusFacetBrick($event)"
     />
     <hr />
     <strong>Facets</strong>
@@ -65,7 +66,7 @@ export class FacetSearchComponent implements OnInit {
   @ViewChild('brickAfterFocusable', { static: true })
   inputSearchElement: ElementRef<HTMLInputElement>;
 
-  @Input() facetGroup: FacetGroup = tempFacetGroup();
+  @Input() facetGroup: FacetSearchConfiguration = tempFacetGroup();
   @Output() update = new EventEmitter<FacetStackItem<unknown>[]>();
 
   ngOnInit(): void {
@@ -85,14 +86,7 @@ export class FacetSearchComponent implements OnInit {
 
   remove(facet: FacetStackItem<unknown>) {
     this.context.remove(facet);
-  }
-
-  removeLastIfEmpty(text: string) {
-    if (text) {
-      return;
-    }
-
-    this.context.removeLast();
+    this.update.emit(this.context.snapshots.facetStack);
   }
 
   tryFocusFacetBrick(some: any) {
@@ -104,32 +98,29 @@ export class FacetSearchComponent implements OnInit {
   }
 }
 
-function tempFacetGroup(): FacetGroup {
-  return {
-    label: '',
-    children: [
-      { label: 'Project' },
-      {
-        label: 'Assignee',
-        options: [
-          { label: 'Peter', value: 'Peter' },
-          { label: 'Markus', value: 'Markus' }
-        ]
-      },
-      {
-        label: 'Company',
-        children: [
-          { label: 'Type', options: [{ label: 'AG', value: 'AG' }] },
-          { label: 'Name' },
-          {
-            label: 'Projects shown',
-            children: [
-              { label: 'Name' },
-              { label: 'Type', options: [{ label: 'Active', value: 'Active' }] }
-            ]
-          }
-        ]
-      }
-    ]
-  };
+function tempFacetGroup(): FacetSearchConfiguration {
+  return [
+    { label: 'Project' },
+    {
+      label: 'Assignee',
+      options: [
+        { label: 'Peter', value: 'Peter' },
+        { label: 'Markus', value: 'Markus' }
+      ]
+    },
+    {
+      label: 'Company',
+      children: [
+        { label: 'Type', options: [{ label: 'AG', value: 'AG' }] },
+        { label: 'Name' },
+        {
+          label: 'Projects shown',
+          children: [
+            { label: 'Name' },
+            { label: 'Type', options: [{ label: 'Active', value: 'Active' }] }
+          ]
+        }
+      ]
+    }
+  ];
 }

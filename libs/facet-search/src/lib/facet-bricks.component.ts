@@ -10,8 +10,8 @@ import {
   QueryList,
   ViewChildren
 } from '@angular/core';
-import { FacetStackItem } from './facet';
 import { FacetBrickComponent } from './facet-brick.component';
+import { FacetStackItem } from './facet-context';
 
 @Component({
   selector: 'poc-facet-bricks',

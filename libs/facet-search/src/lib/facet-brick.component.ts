@@ -6,7 +6,7 @@ import {
   Input,
   Output
 } from '@angular/core';
-import { FacetStackItem } from './facet';
+import { FacetStackItem } from './facet-context';
 
 @Component({
   selector: 'poc-facet-brick',

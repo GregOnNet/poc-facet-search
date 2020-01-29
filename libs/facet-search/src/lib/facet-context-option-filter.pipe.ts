@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FacetMenuItem } from './facet';
+import { FacetMenuItem } from './facet-context';
 
 @Pipe({
   name: 'facetContextOptionFilter'
