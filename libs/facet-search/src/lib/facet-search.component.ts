@@ -30,30 +30,43 @@ import {
     ></poc-facet-bricks>
     <input
       type="text"
+      placeholder="Search..."
       #brickAfterFocusable
       [formControl]="inputSearch"
       (keydown.enter)="setValue($event.target.value)"
       (keydown.ArrowLeft)="tryFocusFacetBrick($event)"
       (keydown.backspace)="tryFocusFacetBrick($event)"
     />
-    <hr />
-    <strong>Facets</strong>
-    <button
-      *ngFor="let facet of context.facets$ | async"
-      (click)="scope(facet)"
-    >
-      {{ facet.label }}
-    </button>
-    <hr />
+    <div class="search-additions">
+      <strong>Facets</strong>
+      <button
+        *ngFor="let facet of context.facets$ | async"
+        (click)="scope(facet)"
+      >
+        {{ facet.label }}
+      </button>
 
-    <strong>Options</strong>
-    <button
-      *ngFor="let option of context.facetOptions$ | async"
-      (click)="setValue(option)"
-    >
-      {{ option.label }}
-    </button>
+      <strong>Options</strong>
+      <button
+        *ngFor="let option of context.facetOptions$ | async"
+        (click)="setValue(option)"
+      >
+        {{ option.label }}
+      </button>
+    </div>
   `,
+  styles: [
+    `
+      input[type='text'] {
+        font-size: 16px;
+        padding: 8px;
+      }
+
+      .search-additions {
+        margin-top: 16px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetSearchComponent implements OnInit {
