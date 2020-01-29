@@ -12,6 +12,17 @@ export class FacetValueLabelPipe implements PipeTransform {
       return facet.value;
     }
 
+    if (Array.isArray(facet.value)) {
+      try {
+        return facet.value.reduce(
+          (caption, v) => (!caption ? v.label : `${caption}, ${v.label}`),
+          ''
+        );
+      } catch {
+        return '--/--';
+      }
+    }
+
     return facet.value[labelField] ? facet.value[labelField] : '--/--';
   }
 }

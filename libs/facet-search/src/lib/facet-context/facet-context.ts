@@ -27,6 +27,8 @@ export class FacetContext {
     switchMap(options => (isObservable(options) ? options : of(options)))
   );
 
+  lastScope: FacetGroupMember;
+
   get snapshots() {
     return {
       facets: this.facets$$.getValue()
@@ -39,6 +41,7 @@ export class FacetContext {
   }
 
   scope(facet: FacetGroupMember): void {
+    this.lastScope = facet;
     if (isFacetSelect(facet)) {
       this.options$$.next([]);
       this.valueOptions$$.next(facet.options);
@@ -66,6 +69,13 @@ export class FacetContext {
     }
   }
 
+  restoreOptionsScope() {
+    if (isFacetSelect(this.lastScope)) {
+      this.options$$.next([]);
+      this.valueOptions$$.next(this.lastScope.options);
+    }
+  }
+
   setValue(value: any): void {
     if (
       this.snapshots.facets.length < 1 ||
@@ -84,6 +94,17 @@ export class FacetContext {
       this.facets$$.next(setLast(this.snapshots.facets, last));
     }
 
+    this.unscope();
+  }
+
+  appendValue(value: any) {
+    const last = getLast(this.snapshots.facets);
+    const valuePatched = Array.isArray(last.value)
+      ? [...last.value, value]
+      : [last.value, value];
+
+    last.value = valuePatched;
+    this.facets$$.next(setLast(this.snapshots.facets, last));
     this.unscope();
   }
 

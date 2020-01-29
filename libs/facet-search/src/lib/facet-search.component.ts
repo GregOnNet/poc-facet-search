@@ -102,6 +102,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetSearchComponent implements OnInit, AfterViewInit {
+  private isInAppendMode = false;
   private keyManager: ActiveDescendantKeyManager<FacetOptionListItemComponent>;
 
   readonly inputSearch = new FormControl();
@@ -130,6 +131,16 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
     this.context.valueOptions$.subscribe(console.log);
+
+    this.inputSearch.valueChanges.subscribe(value => {
+      if (value === ',') {
+        this.isInAppendMode = true;
+        this.context.restoreOptionsScope();
+        this.updateOverlayPosition();
+      } else {
+        this.isInAppendMode = false;
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -145,6 +156,14 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
 
   setValue(option: FacetOption<unknown>) {
     this.context.setValue(option);
+    this.inputSearch.reset();
+    this.inputSearchElement.nativeElement.focus();
+    this.update.emit(this.context.snapshots.facets);
+    this.updateOverlayPosition();
+  }
+
+  appendValue(value: Facet<unknown>) {
+    this.context.appendValue(value);
     this.inputSearch.reset();
     this.inputSearchElement.nativeElement.focus();
     this.update.emit(this.context.snapshots.facets);
@@ -189,6 +208,11 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
           this.setValue(this.inputSearch.value);
         } else if (this.keyManager.activeItem.tag === 'facet') {
           this.scope(this.keyManager.activeItem.value);
+        } else if (
+          this.keyManager.activeItem.tag === 'valueOption' &&
+          this.isInAppendMode
+        ) {
+          this.appendValue(this.keyManager.activeItem.value);
         } else {
           this.setValue(this.keyManager.activeItem.value as any);
         }
@@ -210,7 +234,7 @@ function tempFacetGroup(): FacetConfiguration {
     {
       label: 'Assignee',
       options: [
-        { label: 'Peter', value: 'Peter' },
+        { label: 'Peter', value: { name: 'Peter', id: 'some' } },
         { label: 'Markus', value: 'Markus' }
       ]
     },
