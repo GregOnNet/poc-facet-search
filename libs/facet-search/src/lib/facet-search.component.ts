@@ -248,7 +248,11 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
           }
 
-          this.update.emit([{ id: '0', label: 'Term', value }]);
+          if (value) {
+            this.update.emit([{ id: '0', label: 'Term', value }]);
+          } else {
+            this.update.emit([]);
+          }
         })
     );
   }
