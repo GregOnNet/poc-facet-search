@@ -40,6 +40,7 @@ export class FacetBrickComponent {
   @HostBinding('tabindex') tabindex = 0;
 
   @HostListener('keydown.backspace')
+  @HostListener('keydown.delete')
   onFocus() {
     this.delete.emit(this.facet);
   }
