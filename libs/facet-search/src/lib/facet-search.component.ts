@@ -78,14 +78,14 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
     `
       :host {
         display: block;
-        padding: 8px;
-        border: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
         width: 100%;
       }
 
       input[type='text'] {
-        font-size: 16px;
-        padding: 8px;
+        font-size: 14px;
+        padding: 4px;
+        padding-left: 0;
         outline: none;
         border: none;
       }
