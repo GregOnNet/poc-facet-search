@@ -55,10 +55,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       (detach)="closeOverlay()"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
     >
-      <div
-        class="facet-options"
-        style="display:flex; flex-direction:column;background-color:#fff; padding:16px; padding-left: 0; min-width: 200px;"
-      >
+      <div class="card card-1">
         <poc-facet-option-list-item
           [value]="facet"
           tag="facet"
@@ -81,8 +78,17 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
         padding: 8px;
       }
 
-      .search-additions {
-        margin-top: 16px;
+      .card {
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        position: relative;
+        width: 300px;
+      }
+
+      .card-1 {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
       ::ng-deep.mat-pseudo-checkbox {
@@ -90,11 +96,11 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       }
 
       poc-facet-option-list-item {
-        padding: 4px;
+        padding: 8px;
       }
 
       poc-facet-option-list-item.active {
-        background-color: lightblue;
+        background-color: #0074d9;
         color: #fff;
       }
     `

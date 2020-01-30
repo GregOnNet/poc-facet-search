@@ -14,20 +14,28 @@ import { Facet } from './facet-context';
     <span *ngFor="let label of facet | facetLabels" class="brick-label">{{
       label
     }}</span>
-    <span>{{ facet | facetValueLabel: labelField }}</span>
-    <button (click)="delete.emit(facet)">X</button>
+    <span class="brick-value">{{ facet | facetValueLabel: labelField }}</span>
   `,
   styles: [
     `
       :host {
         display: inline-block;
-        border: 1px solid #e4e4e4;
-        padding: 4px;
+        padding: 8px;
+        background-color: #f8f8f8;
+        color: rgba(0, 0, 0, 0.55);
+        border-radius: 2px 0 0 2px;
+        margin-right: 4px;
+        text-transform: capitalize;
       }
 
       .brick-label {
         color: #3c3c3c;
-        padding-right: 4px;
+        padding-left: 4px;
+      }
+
+      .brick-value {
+        color: #0074d9;
+        padding-left: 4px;
       }
     `
   ]
@@ -41,7 +49,7 @@ export class FacetBrickComponent {
 
   @HostListener('keydown.backspace')
   @HostListener('keydown.delete')
-  onFocus() {
+  emitDelete() {
     this.delete.emit(this.facet);
   }
 }
