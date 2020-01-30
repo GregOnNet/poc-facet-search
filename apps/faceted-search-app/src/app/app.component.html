@@ -1,5 +1,8 @@
 <main>
-  <poc-facet-search (update)="printFacets($event)"></poc-facet-search>
+  <poc-facet-search
+    [facetGroup]="facetConfiguration"
+    (update)="printFacets($event)"
+  ></poc-facet-search>
 
   <h2>
     Current search

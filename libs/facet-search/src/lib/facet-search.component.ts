@@ -17,7 +17,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FacetBricksComponent } from './facet-bricks.component';
 import {
@@ -42,10 +42,11 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       #brickAfterFocusable
       #facetSearchOverlayTrigger="cdkOverlayOrigin"
       [formControl]="inputSearch"
+      [placeholder]="context.snapshots.facets.length === 0 ? 'Search...' : ''"
       (focus)="openOverlay()"
       (keyup)="focusOverlay($event)"
       type="text"
-      [placeholder]="context.snapshots.facets.length === 0 ? 'Search...' : ''"
+      autocomplete="disabled"
     />
 
     <ng-template
@@ -62,13 +63,21 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
         <poc-facet-option-list-item
           [value]="facet"
           tag="facet"
-          *ngFor="let facet of context.options$ | async"
+          *ngFor="
+            let facet of context.options$
+              | async
+              | facetOptionValueFilter: inputSearch.value
+          "
           (click)="scope(facet)"
         ></poc-facet-option-list-item>
         <poc-facet-option-list-item
           [value]="valueOption"
           tag="valueOption"
-          *ngFor="let valueOption of context.valueOptions$ | async"
+          *ngFor="
+            let valueOption of context.valueOptions$
+              | async
+              | facetOptionValueFilter: inputSearch.value
+          "
           (click)="setValue(valueOption)"
         ></poc-facet-option-list-item>
       </div>
@@ -78,14 +87,14 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
     `
       :host {
         display: block;
+        padding: 8px;
         border-bottom: 1px solid #ccc;
         width: 100%;
       }
 
       input[type='text'] {
-        font-size: 14px;
-        padding: 4px;
-        padding-left: 0;
+        font-size: 16px;
+        padding: 8px;
         outline: none;
         border: none;
       }
@@ -142,7 +151,7 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('brickAfterFocusable', { static: true })
   inputSearchElement: ElementRef<HTMLInputElement>;
 
-  @Input() facetGroup: FacetConfiguration = tempFacetGroup();
+  @Input() facetGroup: FacetConfiguration;
   @Input() debounce = 250;
 
   @Output() update = new EventEmitter<Facet<unknown>[]>();
@@ -246,8 +255,8 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private handleInputSearch() {
     this.sink.add(
-      this.inputSearch.valueChanges.subscribe(value => {
-        if (value === ',') {
+      this.inputSearch.valueChanges.subscribe((value: string) => {
+        if (value && value.trim().startsWith(',')) {
           this.isInAppendMode = true;
           this.context.restoreOptionsScope();
           this.updateOverlayPosition();
@@ -278,31 +287,4 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     this.changeDetector.detectChanges();
     this.cdkConnectedOverlay.overlayRef.updatePosition();
   }
-}
-
-function tempFacetGroup(): FacetConfiguration {
-  return [
-    { label: 'Project' },
-    {
-      label: 'Assignee',
-      options: [
-        { label: 'Peter', value: { name: 'Peter', id: 'some' } },
-        { label: 'Markus', value: 'Markus' }
-      ]
-    },
-    {
-      label: 'Company',
-      children: [
-        { label: 'Type', options: of([{ label: 'AG', value: 'AG' }]) },
-        { label: 'Name' },
-        {
-          label: 'Projects shown',
-          children: [
-            { label: 'Name' },
-            { label: 'Type', options: [{ label: 'Active', value: 'Active' }] }
-          ]
-        }
-      ]
-    }
-  ];
 }

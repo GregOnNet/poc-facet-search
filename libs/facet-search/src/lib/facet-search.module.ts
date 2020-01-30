@@ -9,6 +9,7 @@ import { FacetLabelsPipe } from './facet-labels.pipe';
 import { FacetOptionListItemComponent } from './facet-option-list-item.component';
 import { FacetSearchComponent } from './facet-search.component';
 import { FacetValueLabelPipe } from './facet-value-label.pipe';
+import { FacetValueOptionFilterPipe } from './facet-value-option-filter.pipe';
 
 @NgModule({
   imports: [CommonModule, OverlayModule, MatListModule, ReactiveFormsModule],
@@ -18,7 +19,8 @@ import { FacetValueLabelPipe } from './facet-value-label.pipe';
     FacetOptionListItemComponent,
     FacetSearchComponent,
     FacetLabelsPipe,
-    FacetValueLabelPipe
+    FacetValueLabelPipe,
+    FacetValueOptionFilterPipe
   ],
   exports: [FacetSearchComponent]
 })
