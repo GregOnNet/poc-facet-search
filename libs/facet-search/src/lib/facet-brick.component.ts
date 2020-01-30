@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   HostBinding,
@@ -38,7 +39,8 @@ import { Facet } from './facet-context';
         padding-left: 4px;
       }
     `
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetBrickComponent {
   @Input() facet: Facet<unknown>;

@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -22,7 +23,8 @@ import { Facet } from './facet-context';
       (delete)="emitDelete($event)"
       [labelField]="labelField"
     ></poc-facet-brick>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetBricksComponent {
   @ViewChildren(FacetBrickComponent, { read: ElementRef })

@@ -65,7 +65,9 @@ export class FacetContext {
         ? [...itemWithoutValue.labelAdditions, facet.label]
         : [facet.label];
 
-      this.facets$$.next(setLast(this.snapshots.facets, itemWithoutValue));
+      this.facets$$.next(
+        setLast(this.snapshots.facets, { ...itemWithoutValue })
+      );
     }
   }
 

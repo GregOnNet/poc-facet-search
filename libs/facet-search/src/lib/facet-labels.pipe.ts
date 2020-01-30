@@ -2,8 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Facet } from './facet-context';
 
 @Pipe({
-  name: 'facetLabels',
-  pure: false
+  name: 'facetLabels'
 })
 export class FacetLabelsPipe implements PipeTransform {
   transform(facet: Facet<unknown>): string[] {

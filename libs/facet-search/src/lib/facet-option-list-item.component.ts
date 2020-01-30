@@ -1,5 +1,10 @@
 import { Highlightable } from '@angular/cdk/a11y';
-import { Component, HostBinding, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input
+} from '@angular/core';
 import { Facet } from './facet-context';
 
 @Component({
@@ -18,7 +23,8 @@ import { Facet } from './facet-context';
         opacity: 0.3;
       }
     `
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FacetOptionListItemComponent implements Highlightable {
   @Input() value: Facet<unknown>;
