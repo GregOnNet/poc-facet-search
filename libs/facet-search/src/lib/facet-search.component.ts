@@ -53,6 +53,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       [cdkConnectedOverlayHasBackdrop]="true"
       [cdkConnectedOverlayOpen]="isOpen"
       [cdkConnectedOverlayOrigin]="facetSearchOverlayTrigger"
+      [cdkConnectedOverlayOffsetX]="-8"
       (backdropClick)="closeOverlay()"
       (detach)="closeOverlay()"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
@@ -75,9 +76,16 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
   `,
   styles: [
     `
+      :host {
+        padding: 8px;
+        border: 1px solid #ccc;
+      }
+
       input[type='text'] {
         font-size: 16px;
         padding: 8px;
+        outline: none;
+        border: none;
       }
 
       .card {

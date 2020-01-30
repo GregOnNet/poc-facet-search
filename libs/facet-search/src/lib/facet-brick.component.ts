@@ -21,7 +21,8 @@ import { Facet } from './facet-context';
     `
       :host {
         display: inline-block;
-        padding: 8px;
+        padding: 4px;
+        font-size: 14px;
         background-color: #f8f8f8;
         color: rgba(0, 0, 0, 0.55);
         border-radius: 2px 0 0 2px;
