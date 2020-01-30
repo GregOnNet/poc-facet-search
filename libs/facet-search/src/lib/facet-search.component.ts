@@ -43,7 +43,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       #facetSearchOverlayTrigger="cdkOverlayOrigin"
       [formControl]="inputSearch"
       (focus)="openOverlay()"
-      (keydown)="focusOverlay($event)"
+      (keyup)="focusOverlay($event)"
       type="text"
       placeholder="Search..."
     />
@@ -200,6 +200,14 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   focusOverlay(keyboardEvent: KeyboardEvent) {
     switch (keyboardEvent.keyCode) {
       case Keycode.UP_ARROW:
+        const activeItemIndex = this.keyManager.activeItemIndex;
+        this.keyManager.onKeydown(keyboardEvent);
+
+        if (activeItemIndex === 0) {
+          this.isOpen = false;
+          this.keyManager.updateActiveItem(-1);
+        }
+        break;
       case Keycode.DOWN_ARROW:
         this.isOpen = true;
         this.keyManager.onKeydown(keyboardEvent);
@@ -221,7 +229,6 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           this.setValue(this.keyManager.activeItem.value as any);
         }
-
         this.keyManager.updateActiveItem(-1);
         break;
     }
