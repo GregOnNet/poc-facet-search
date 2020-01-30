@@ -32,6 +32,7 @@ export class FacetBricksComponent {
   @Input() bricks: Facet<unknown>[];
   @Output() delete = new EventEmitter<Facet<unknown>>();
   @Input() labelField = 'label';
+
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   @HostListener('keydown.ArrowLeft')
@@ -50,7 +51,13 @@ export class FacetBricksComponent {
   }
 
   focus() {
-    this.brickChildren.last.nativeElement.focus();
+    if (
+      this.brickChildren &&
+      this.brickChildren.last &&
+      this.brickChildren.last.nativeElement
+    ) {
+      this.brickChildren.last.nativeElement.focus();
+    }
   }
 
   private focusNeighbour(getNeighbourIndex: (index: number) => number): void {

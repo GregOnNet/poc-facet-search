@@ -136,7 +136,6 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
-    this.context.valueOptions$.subscribe(console.log);
 
     this.inputSearch.valueChanges.subscribe(value => {
       if (value === ',') {
