@@ -77,8 +77,10 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
   styles: [
     `
       :host {
+        display: block;
         padding: 8px;
         border: 1px solid #ccc;
+        width: 100%;
       }
 
       input[type='text'] {
