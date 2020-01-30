@@ -45,7 +45,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       (focus)="openOverlay()"
       (keyup)="focusOverlay($event)"
       type="text"
-      placeholder="Search..."
+      [placeholder]="context.snapshots.facets.length === 0 ? 'Search...' : ''"
     />
 
     <ng-template
