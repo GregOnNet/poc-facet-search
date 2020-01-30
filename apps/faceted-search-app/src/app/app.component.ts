@@ -13,10 +13,9 @@ export class AppComponent {
     { label: 'Project' },
     {
       label: 'Assignee',
-      options: [
-        { label: 'Peter', value: { name: 'Peter', id: 'some' } },
-        { label: 'Markus', value: 'Markus' }
-      ]
+      options: Array(100)
+        .fill(null)
+        .map((x, i) => ({ label: `[${i}] User ${i}`, value: i }))
     },
     {
       label: 'Company',

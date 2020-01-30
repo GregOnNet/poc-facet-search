@@ -100,6 +100,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       }
 
       .card {
+        overflow: auto;
         background: #fff;
         border-radius: 2px;
         display: inline-block;
