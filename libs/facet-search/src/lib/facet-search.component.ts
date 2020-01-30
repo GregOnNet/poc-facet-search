@@ -44,7 +44,7 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
       [formControl]="inputSearch"
       [placeholder]="context.snapshots.facets.length === 0 ? 'Search...' : ''"
       (focus)="openOverlay()"
-      (keyup)="focusOverlay($event)"
+      (keydown)="focusOverlay($event)"
       type="text"
       autocomplete="disabled"
     />
@@ -229,6 +229,8 @@ export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         break;
       case Keycode.DOWN_ARROW:
+        console.log('DOWNDOWNDONWDOWN');
+
         this.isOpen = true;
         this.keyManager.onKeydown(keyboardEvent);
         break;
