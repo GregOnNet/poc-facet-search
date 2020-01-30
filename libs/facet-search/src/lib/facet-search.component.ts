@@ -9,6 +9,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   QueryList,
@@ -16,7 +17,8 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { FacetBricksComponent } from './facet-bricks.component';
 import {
   Facet,
@@ -107,7 +109,8 @@ import { FacetOptionListItemComponent } from './facet-option-list-item.component
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FacetSearchComponent implements OnInit, AfterViewInit {
+export class FacetSearchComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly sink = new Subscription();
   private isInAppendMode = false;
   private keyManager: ActiveDescendantKeyManager<FacetOptionListItemComponent>;
 
@@ -130,28 +133,25 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
   inputSearchElement: ElementRef<HTMLInputElement>;
 
   @Input() facetGroup: FacetConfiguration = tempFacetGroup();
+  @Input() debounce = 250;
+
   @Output() update = new EventEmitter<Facet<unknown>[]>();
 
   constructor(private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.context.configure(this.facetGroup);
-
-    this.inputSearch.valueChanges.subscribe(value => {
-      if (value === ',') {
-        this.isInAppendMode = true;
-        this.context.restoreOptionsScope();
-        this.updateOverlayPosition();
-      } else {
-        this.isInAppendMode = false;
-      }
-    });
+    this.handleInputSearch();
   }
 
   ngAfterViewInit(): void {
     this.keyManager = new ActiveDescendantKeyManager(this.facetOptions)
       .withWrap()
       .withTypeAhead();
+  }
+
+  ngOnDestroy(): void {
+    this.sink.unsubscribe();
   }
 
   scope(option: FacetGroupMember): void {
@@ -227,7 +227,33 @@ export class FacetSearchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateOverlayPosition() {
+  private handleInputSearch() {
+    this.sink.add(
+      this.inputSearch.valueChanges.subscribe(value => {
+        if (value === ',') {
+          this.isInAppendMode = true;
+          this.context.restoreOptionsScope();
+          this.updateOverlayPosition();
+        } else {
+          this.isInAppendMode = false;
+        }
+      })
+    );
+
+    this.sink.add(
+      this.inputSearch.valueChanges
+        .pipe(debounceTime(this.debounce))
+        .subscribe(value => {
+          if (this.context.snapshots.facets.length !== 0) {
+            return;
+          }
+
+          this.update.emit([{ id: '0', label: 'Term', value }]);
+        })
+    );
+  }
+
+  private updateOverlayPosition() {
     this.changeDetector.detectChanges();
     this.cdkConnectedOverlay.overlayRef.updatePosition();
   }
